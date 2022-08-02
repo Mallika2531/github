@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="20cee386-1c98-40e7-8264-48e9a3350b38" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="d88b1ca9-f4c5-47b5-bf0a-804c6bc4ed2b" />
+	<flow name="objectstoreFlow" doc:id="30f54d1d-6050-4302-a9e0-e926572bf144" >
+		<http:listener doc:name="Listener" doc:id="e85cfeda-af0e-4b94-97e1-50f92db35c89" config-ref="HTTP_Listener_config" path="/objectstore"/>
+		<os:store doc:name="Store" doc:id="bb719896-74b9-4c84-b2c5-7e50c01ac7e8" key="Key_value" objectStore="Object_store">
+			<os:value ><![CDATA[#[vars.Key_value]]]></os:value>
+		</os:store>
+		<choice doc:name="Choice" doc:id="b170053b-1ab9-4c1e-85a0-5893dd2bfc81" >
+			<when expression='#[vars.Key_value=="Mallika"]'>
+				<set-payload value='"Using object store"' doc:name="Set Payload" doc:id="4e475f0c-d7a5-41be-8578-f04b1a723fdf" />
+				<set-variable value="#[attributes.queryParams.Key_value]" doc:name="Set Variable" doc:id="15df83f1-d483-4e9f-b803-88b2b5bb3c3d" variableName="Key_value" />
+			</when>
+			<otherwise >
+				<set-payload value='"key value not defined"' doc:name="Set Payload" doc:id="5c325cce-1a26-4c19-bec8-e2f8141e8942" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
